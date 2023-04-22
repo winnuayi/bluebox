@@ -1,10 +1,14 @@
 window.addEventListener('DOMContentLoaded', () => {
-  const replaceText = (selector, text) => {
-    const element = document.getElementById(selector)
-    if (element) element.innerText = text
+  let clock = document.getElementById('clock');
+
+  function time() {
+    var d = new Date();
+    var s = d.getSeconds();
+    var m = d.getMinutes();
+    var h = d.getHours();
+    clock.textContent =
+      ("0" + h).substr(-2) + ":" + ("0" + m).substr(-2) + ":" + ("0" + s).substr(-2);
   }
 
-  for (const dependency of ['chrome', 'node', 'electron']) {
-    replaceText(`${dependency}-version`, process.versions[dependency])
-  }
+  setInterval(time, 1000);
 })

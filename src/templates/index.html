@@ -3,13 +3,21 @@
   <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <title>GoldBox</title>
+    <title>GoldBox | Home</title>
     <link rel="stylesheet" type="text/css" href="../../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../../node_modules/bootstrap-icons/font/bootstrap-icons.min.css">
     <link rel="stylesheet" type="text/css" href="../scss/main.css">
   </head>
   <body>
+    <div class="topbar">
+      <button id="config-btn" type="button" class="btn btn-dark btn-sm mt-2 me-2">
+        <i class="bi bi-gear"></i>
+      </button>
+    </div>
     <div class="box">
       <div id="clock"></div>
     </div>
+    
+    <script src="../renderer.js"></script>
   </body>
 </html>

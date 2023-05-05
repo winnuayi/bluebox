@@ -1,4 +1,7 @@
 forge.config.js
+package.json.bak
+package.json.bak.2
 package-lock.json
+/dist/
 /node_modules/
 /out/

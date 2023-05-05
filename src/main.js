@@ -1,16 +1,19 @@
 const path = require('path')
 const { app, BrowserWindow } = require('electron')
 
+// import '../scss/styles.scss'
+// import * as bootstrap from 'bootstrap'
+
 const createWindow = () => {
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 400,
+    height: 300,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }
   })
-
-  win.loadFile('app/templates/index.html')
+  // win.loadURL('https://github.com')
+  win.loadFile('src/templates/index.html')
 }
 
 app.whenReady().then(() => {

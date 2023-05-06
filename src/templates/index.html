@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <title>GoldBox | Home</title>
+    <title>PRAYER TIME</title>
     <link rel="stylesheet" type="text/css" href="../../node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../../node_modules/bootstrap-icons/font/bootstrap-icons.min.css">
     <link rel="stylesheet" type="text/css" href="../scss/main.css">
@@ -13,11 +13,15 @@
       <button id="config-btn" type="button" class="btn btn-dark btn-sm mt-2 me-2">
         <i class="bi bi-gear"></i>
       </button>
+      <button id="refresh-btn" type="button" class="btn btn-dark btn-sm mt-2 me-2">
+        <i class="bi bi-arrow-repeat"></i>
+      </button>
     </div>
     <div class="box">
       <div id="clock"></div>
+      <div id="selected-method"></div>
     </div>
     
-    <script src="../renderer.js"></script>
+    <script src="../renderers/index.js"></script>
   </body>
 </html>

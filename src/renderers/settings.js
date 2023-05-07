@@ -3,12 +3,15 @@ class Setting {
     this.bindApplyBtn()
   }
 
+  setDbManager(dbm) {
+    this.dbm = dbm
+  }
+
   bindApplyBtn() {
     const applyBtn = document.getElementById('apply-btn')
     applyBtn.addEventListener('click', () => {
       const methodSelect = document.getElementById('method-select')
-      localStorage.setItem('selectedMethod', methodSelect.value)
-      this.setDisabledBtn('apply-btn')
+      this.dbm.db.global.update(1, { key: 'selectedMethod', value: methodSelect.value })
     })
   }
 
@@ -20,4 +23,5 @@ class Setting {
   }
 }
 
-new Setting()
+let s = new Setting()
+s.setDbManager(DbManager.instance)

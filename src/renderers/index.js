@@ -1,34 +1,28 @@
-// CALCULATION METHOD
-const methods = [
-  { value: 1, name: 'University of Islamic Sciences, Karachi' },
-  { value: 2, name: 'Islamic Society of North America' },
-  { value: 3, name: 'Muslim World League' },
-]
 
-const INITIAL_METHOD = 3
+
 
 class PrayerTime {
   constructor() {
-    // store variables
-    localStorage.setItem('methods', JSON.stringify(methods))
-    localStorage.setItem('selectedMethod', INITIAL_METHOD)
+    this.dbm = null
 
     this.bindConfigBtn()
     this.bindRefreshBtn()
   }
 
-  getSelectedMethodName() {
-    const methodValue = parseInt(localStorage.getItem('selectedMethod'))  
-    const methods = JSON.parse(localStorage.getItem('methods'))
-  
+  setDbManager(dbm) {
+    this.dbm = dbm
+  } 
+
+  async getSelectedMethodName() {  
+    const methods = await this.dbm.db.methods.toArray()
+    const selectedMethod = await this.dbm.db.global.get({ key: 'selectedMethod'})
+
+    let foundMethod = methods.filter((method => method.id == selectedMethod.value))
+    
     let methodName = null;
-    for (let i = 0; i < methods.length; i++) {
-      if (methods[i].value === methodValue) {
-        methodName = methods[i].name
-        break;
-      }
-    }
-  
+    if (foundMethod.length === 1)
+      methodName = foundMethod[0].name
+    
     return methodName;
   }
 
@@ -63,7 +57,7 @@ class PrayerTime {
 
   renderMethod() {
     const selected = document.getElementById('selected-method')
-    selected.innerText = this.getSelectedMethodName()
+    this.getSelectedMethodName().then(result => selected.innerText = result)
   }
 
   render() {
@@ -72,4 +66,8 @@ class PrayerTime {
   }
 }
 
-new PrayerTime().render()
+
+// dbm.run()
+let renderer = new PrayerTime()
+renderer.setDbManager(DbManager.instance)
+renderer.render()

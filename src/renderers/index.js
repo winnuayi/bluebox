@@ -1,9 +1,6 @@
-
-
-
 class PrayerTime {
   constructor() {
-    this.dbm = null
+    this.setDbManager(DbManager.instance)
 
     this.bindConfigBtn()
     this.bindRefreshBtn()
@@ -66,8 +63,4 @@ class PrayerTime {
   }
 }
 
-
-// dbm.run()
-let renderer = new PrayerTime()
-renderer.setDbManager(DbManager.instance)
-renderer.render()
+new PrayerTime().render()

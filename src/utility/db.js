@@ -23,23 +23,27 @@ class DbManager {
   }
 
   constructor() {
+    // create a database
     this.db = new Dexie('prayertime')
+
+    // create tables
     this.db.version(1).stores({
       methods: '++id, name',
       global: '++id, key, value'
     })
 
-    this.db.open()
+    // this.db.open()
 
-    this.insert_seed()
+    // populate with initial data
+    this.insertSeed()
   }
 
-  insert_seed() {
+  insertSeed() {
     this.db.methods.bulkPut(METHODS_SEED)
     this.db.global.add(GLOBAL_SEED)
   }
 
-  run_sample() {
+  runSample() {
     // get all schemas
     this.db.tables.forEach((table) => {
       console.log('Schema of ' + table.name + ': ' + JSON.stringify(table.schema))

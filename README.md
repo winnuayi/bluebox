@@ -28,7 +28,8 @@ This is a minimal Electron app. It shows how to:
 - Persist data using IndexedDB (and Dexie, IndexedDB wrapper) with Simpleton Pattern
 - Communicate from child window to parent window
 - Loading Bootstrap CSS
+- Import API Provider class
+- Get resource using API (two way communication, render to main to render)
 
 Todo:
-- Get resource using API
 - Use Observer Pattern to render listeners

@@ -1,16 +1,20 @@
 const path = require('path')
 const { app, BrowserWindow, ipcMain } = require('electron')
+const { AdhanProvider } = require('./utility/adhan-provider.js')
+
 
 const createWindow = () => {
   const win = new BrowserWindow({
-    width: 400,
-    height: 300,
+    width: 800,
+    height: 400,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }
   })
 
   win.loadFile('src/templates/index.html')
+  
+  win.webContents.openDevTools()
 
   return win
 }
@@ -46,6 +50,15 @@ app.whenReady().then(() => {
 
   ipcMain.on('open-settings', () => {
     createSettingsWindow(mainWin)
+  })
+
+  ipcMain.on('update-data', () => {
+    AdhanProvider.getData()
+  })
+
+  ipcMain.handle('get-prayer-time', async (_, day) => {
+    const response = await fetch('http://localhost:9000/adhan.json')
+    return response.json()
   })
 })
 

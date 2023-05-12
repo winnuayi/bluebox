@@ -4,6 +4,10 @@ class PrayerTime {
 
     this.bindSettingsBtn()
     this.bindRefreshBtn()
+
+    window.electronAPI.onCloseSettings(() => {
+      this.renderMethod()
+    })
   }
 
   setDbManager(dbm) {
@@ -26,7 +30,7 @@ class PrayerTime {
   bindSettingsBtn() {
     const configBtn = document.getElementById('config-btn')
     configBtn.addEventListener('click', () => {
-      // window.open('settings.html', '_blank', 'top=100,left=200,height=300,width=300,frame=true,nodeIntegration=no')
+      // one way, renderer to main
       window.electronAPI.openSettings()
     })
   }
@@ -34,7 +38,7 @@ class PrayerTime {
   bindRefreshBtn() {
     const refreshBtn = document.getElementById('refresh-btn')
     refreshBtn.addEventListener('click', () => {
-      alert('do nothing!')
+      window.electronAPI.updateData()
     })
   }
 
@@ -58,13 +62,31 @@ class PrayerTime {
     this.getSelectedMethodName().then(result => selected.innerText = result)
   }
 
+  async renderPrayerTimes() {
+    // get the day starting from 0. need to find data in an array
+    const day = new Date().getDate() - 1
+
+    // TODO add parameter selectedMethod
+    window.electronAPI.getPrayerTime(day).then(response => {
+      const timings = response.data[day].timings
+      
+      document.querySelector('.fajr-time').innerText = this.cleanTiming(timings.Fajr)
+      document.querySelector('.dhuhr-time').innerText = this.cleanTiming(timings.Dhuhr)
+      document.querySelector('.asr-time').innerText = this.cleanTiming(timings.Asr)
+      document.querySelector('.maghrib-time').innerText = this.cleanTiming(timings.Maghrib)
+      document.querySelector('.isha-time').innerText = this.cleanTiming(timings.Isha)
+    })
+  }
+
+  // remove timezone. ex: 11:25 (WIB)
+  cleanTiming(timing) {
+    return timing.split(' ')[0]
+  }
+
   render() {
     this.renderClock()
     this.renderMethod()
-
-    window.electronAPI.onCloseSettings(() => {
-      this.renderMethod()
-    })
+    this.renderPrayerTimes()
   }
 }
 

@@ -2,7 +2,7 @@ class PrayerTime {
   constructor() {
     this.setDbManager(DbManager.instance)
 
-    this.bindConfigBtn()
+    this.bindSettingsBtn()
     this.bindRefreshBtn()
   }
 
@@ -23,17 +23,18 @@ class PrayerTime {
     return methodName;
   }
 
-  bindConfigBtn() {
+  bindSettingsBtn() {
     const configBtn = document.getElementById('config-btn')
     configBtn.addEventListener('click', () => {
-      window.open('settings.html', '_blank', 'top=100,left=200,height=300,width=300,frame=true,nodeIntegration=no')
+      // window.open('settings.html', '_blank', 'top=100,left=200,height=300,width=300,frame=true,nodeIntegration=no')
+      window.electronAPI.openSettings()
     })
   }
 
   bindRefreshBtn() {
     const refreshBtn = document.getElementById('refresh-btn')
     refreshBtn.addEventListener('click', () => {
-      this.renderMethod()
+      alert('do nothing!')
     })
   }
 
@@ -60,6 +61,10 @@ class PrayerTime {
   render() {
     this.renderClock()
     this.renderMethod()
+
+    window.electronAPI.onCloseSettings(() => {
+      this.renderMethod()
+    })
   }
 }
 

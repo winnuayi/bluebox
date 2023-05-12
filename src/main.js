@@ -1,5 +1,5 @@
 const path = require('path')
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -10,28 +10,43 @@ const createWindow = () => {
     }
   })
 
-  win.on('closed', () => {
-    console.log('closed')
+  win.loadFile('src/templates/index.html')
+
+  return win
+}
+
+const createSettingsWindow = (mainWin) => {
+  const win = new BrowserWindow({
+    width: 300,
+    height: 300,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js')
+    }
   })
 
-  win.loadFile('src/templates/index.html')
+  win.on('closed', () => {
+    mainWin.webContents.send('close-settings')
+  })
+
+  win.loadFile('src/templates/settings.html')
 }
 
 app.whenReady().then(() => {
-  createWindow()
+  const mainWin = createWindow()
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
-
-  app.on('browser-window-created', () => {
-    fWin = BrowserWindow.getFocusedWindow()
-    fWin.on('closed', () => {
-      console.log('fWin closed')
-    })
+  
+  // receiving event from renderer to main
+  ipcMain.on('set-title', (event, title) => {
+    const win = BrowserWindow.fromWebContents(event.sender)
+    win.setTitle(title)
   })
 
-  console.log('main process')
+  ipcMain.on('open-settings', () => {
+    createSettingsWindow(mainWin)
+  })
 })
 
 app.on('window-all-closed', () => {

@@ -19,3 +19,16 @@ Run project
 ```
 $ npm start
 ```
+
+## FEATURES
+
+This is a minimal Electron app. It shows how to:
+- Create a main window
+- Create a child window (from main process)
+- Persist data using IndexedDB (and Dexie, IndexedDB wrapper) with Simpleton Pattern
+- Communicate from child window to parent window
+- Loading Bootstrap CSS
+
+Todo:
+- Get resource using API
+- Use Observer Pattern to render listeners

@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>Configuration</title>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; img-src 'self' data:">
     <link rel="stylesheet" type="text/css" href="../../node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../../node_modules/bootstrap-icons/font/bootstrap-icons.min.css">
     <link rel="stylesheet" type="text/css" href="../scss/settings.css">
@@ -15,12 +15,14 @@
           <label class="form-label"><strong>Method</strong></label>
           <select id="method-select" class="form-select form-select-sm"></select>
         </div>
-        <button id="apply-btn" type="button" class="btn btn-primary btn-sm">Apply</button>
+        <button id="cancel-btn" type="button" class="btn btn-light btn-sm">Cancel</button>
+        <button id="apply-btn" type="button" class="btn btn-primary btn-sm">OK</button>
       </form>
     </div>
 
     <script src="../../node_modules/dexie/dist/dexie.min.js"></script>
     <script src="../utility/db.js"></script>
+    <script src="../utility/observer.js"></script>
     <script src="../renderers/settings.js"></script>
   </body>
 </html>

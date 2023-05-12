@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; img-src 'self' data:">
     <title>PRAYER TIME</title>
     <link rel="stylesheet" type="text/css" href="../../node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="../../node_modules/bootstrap-icons/font/bootstrap-icons.min.css">
@@ -24,6 +24,7 @@
     
     <script src="../../node_modules/dexie/dist/dexie.min.js"></script>
     <script src="../utility/db.js"></script>
+    <script src="../utility/observer.js"></script>
     <script src="../renderers/index.js"></script>
   </body>
 </html>

@@ -3,6 +3,7 @@ class Setting {
     this.setDbManager(DbManager.instance)
 
     this.bindApplyBtn()
+    this.bindCancelBtn()
 
     this.renderMethodSelect()
   }
@@ -18,6 +19,15 @@ class Setting {
 
       // store selected method to db
       this.dbm.db.global.update(1, { key: 'selectedMethod', value: parseInt(methodSelect.value) })
+
+      window.close()
+    })
+  }
+
+  bindCancelBtn() {
+    const cancelBtn = document.getElementById('cancel-btn')
+    cancelBtn.addEventListener('click', () => {
+      window.close()
     })
   }
 

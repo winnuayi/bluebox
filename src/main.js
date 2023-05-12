@@ -9,7 +9,11 @@ const createWindow = () => {
       preload: path.join(__dirname, 'preload.js')
     }
   })
-  
+
+  win.on('closed', () => {
+    console.log('closed')
+  })
+
   win.loadFile('src/templates/index.html')
 }
 
@@ -20,14 +24,14 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 
-  // console.log('READY')
-  // const request = net.request('http://api.aladhan.com/v1/calendarByCity/2023/5?city=Jakarta&country=Indonesia&method=3')
-  // request.on('response', (response) => {
-  //   console.log(`STATUS: ${response.statusCode}`)
-  //   response.on('data', (chunk) => {
-  //     console.log(`BODY: ${chunk}`)
-  //   })
-  // })
+  app.on('browser-window-created', () => {
+    fWin = BrowserWindow.getFocusedWindow()
+    fWin.on('closed', () => {
+      console.log('fWin closed')
+    })
+  })
+
+  console.log('main process')
 })
 
 app.on('window-all-closed', () => {

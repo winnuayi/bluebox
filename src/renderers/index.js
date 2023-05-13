@@ -1,10 +1,13 @@
 class PrayerTime {
   constructor() {
+    // so class can call database manager
     this.setDbManager(DbManager.instance)
 
+    // set event to buttons
     this.bindSettingsBtn()
     this.bindRefreshBtn()
 
+    // receive from main process to render method
     window.electronAPI.onCloseSettings(() => {
       this.renderMethod()
     })
@@ -14,12 +17,18 @@ class PrayerTime {
     this.dbm = dbm
   } 
 
-  async getSelectedMethodName() {  
+  // get selected method from IndexedDB
+  async getSelectedMethodName() {
+    // query all methods
     const methods = await this.dbm.db.methods.toArray()
+
+    // query a selected method
     const selectedMethod = await this.dbm.db.global.get({ key: 'selectedMethod'})
 
+    // find a selected method from methods array
     let foundMethod = methods.filter((method => method.id == selectedMethod.value))
     
+    // get selected method name
     let methodName = null;
     if (foundMethod.length === 1)
       methodName = foundMethod[0].name
@@ -30,7 +39,7 @@ class PrayerTime {
   bindSettingsBtn() {
     const configBtn = document.getElementById('config-btn')
     configBtn.addEventListener('click', () => {
-      // one way, renderer to main
+      // one way, tell main process to open settings window
       window.electronAPI.openSettings()
     })
   }
@@ -38,6 +47,7 @@ class PrayerTime {
   bindRefreshBtn() {
     const refreshBtn = document.getElementById('refresh-btn')
     refreshBtn.addEventListener('click', () => {
+      // one way, tell main process to update data from remote server
       window.electronAPI.updateData()
     })
   }
@@ -50,26 +60,30 @@ class PrayerTime {
       var s = d.getSeconds();
       var m = d.getMinutes();
       var h = d.getHours();
+
+      // render clock in main window
       clock.textContent =
         ("0" + h).substr(-2) + ":" + ("0" + m).substr(-2) + ":" + ("0" + s).substr(-2);
     }
   
+    // every 1 second, render clock
     setInterval(time, 1000);
   }
 
   renderMethod() {
     const selected = document.getElementById('selected-method')
+
+    // render method name in main window
     this.getSelectedMethodName().then(result => selected.innerText = result)
   }
 
-  async renderPrayerTimes() {
+  renderPrayerTimes() {
     // get the day starting from 0. need to find data in an array
     const day = new Date().getDate() - 1
 
     // TODO add parameter selectedMethod
-    window.electronAPI.getPrayerTime(day).then(response => {
-      const timings = response.data[day].timings
-      
+    window.electronAPI.getPrayerTime(day).then(timings => {
+      // render prayer times in main window
       document.querySelector('.fajr-time').innerText = this.cleanTiming(timings.Fajr)
       document.querySelector('.dhuhr-time').innerText = this.cleanTiming(timings.Dhuhr)
       document.querySelector('.asr-time').innerText = this.cleanTiming(timings.Asr)
@@ -78,7 +92,7 @@ class PrayerTime {
     })
   }
 
-  // remove timezone. ex: 11:25 (WIB)
+  // remove timezone string. ex: 11:25 (WIB)
   cleanTiming(timing) {
     return timing.split(' ')[0]
   }

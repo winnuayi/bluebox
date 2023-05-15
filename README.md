@@ -30,6 +30,3 @@ This is a minimal Electron app. It shows how to:
 - Loading Bootstrap CSS
 - Import API Provider class
 - Get resource using API (two way communication, render to main to render)
-
-Todo:
-- Use Observer Pattern to render listeners

@@ -2,7 +2,8 @@
 
 const path = require('path')
 const { app, BrowserWindow, ipcMain } = require('electron')
-const { AdhanProvider } = require('./utility/adhan-provider.js')
+const { adhanProvider } = require('./utility/adhan-provider.js')
+// const { DbManager } = require('./utility/db.js')
 
 
 const createWindow = () => {
@@ -64,15 +65,14 @@ app.whenReady().then(() => {
     createSettingsWindow(mainWin)
   })
 
-  ipcMain.on('update-data', () => {
-    AdhanProvider.getPrayerTimes()
+  ipcMain.handle('get-prayer-time-list', async (_, params) => {
+    return await adhanProvider.getPrayerTimeList(params)
   })
 
   // receive event from renderer via 'get-prayer-time' channel
   // and send response back to renderer (two way)
   ipcMain.handle('get-prayer-time', async (_, day) => {
-    const response = await AdhanProvider.getPrayerTime(day)
-    return response
+    return await adhanProvider.getPrayerTime(day)
   })
 })
 

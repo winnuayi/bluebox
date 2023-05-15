@@ -6,22 +6,36 @@
 // http://api.aladhan.com/v1/calendarByCity/2023/5?city=Jakarta&country=Indonesia&method=3
 
 class AdhanProvider {
-  static getPrayerTimes() {
-    fetch('http://localhost:9000/adhan.json')
-      .then(response => {
-        response.json().then(result => {
-          result.data.forEach(i => {
-            console.log(i.date.readable, i.timings.Fajr, i.timings.Dhuhr,
-                        i.timings.Asr, i.timings.Maghrib, i.timings.Isha)
-          });
-        })
-      }).catch(e => console.log(e))
+  constructor() {
+    // so class can call database manager
+    // this.setDbManager(DbManager.instance)
+  }
+
+  setDbManager(dbm) {
+    this.dbm = dbm
+  }
+
+  async getPrayerTimeList(params) {
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = now.getMonth() + 1
+
+    const method = params[0].id
+    const city = params[1].name
+    
+    const url = `http://api.aladhan.com/v1/calendarByCity/${year}/${month}?city=${city}&country=Indonesia&method=${method}`
+    // const url = 'http://localhost:9000/2023-05-M03-JAKARTA.json'
+
+    const response = await fetch(url)
+    const x = await response.json()
+    
+    return await x.data
   }
 
   // get prayer time by date
-  static async getPrayerTime(day) {
+  async getPrayerTime(day) {
     // using Fetch API to get data
-    const response = await fetch('http://localhost:9000/adhan.json')
+    const response = await fetch('http://localhost:9000/2023-05-M03-JAKARTA.json')
     const x = await response.json()
 
     // async function has to return Promise, keep using await to return Promise
@@ -30,4 +44,4 @@ class AdhanProvider {
 }
 
 // in electron, use module to export
-module.exports.AdhanProvider = AdhanProvider
+module.exports.adhanProvider = new AdhanProvider()

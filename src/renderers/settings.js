@@ -6,6 +6,7 @@ class Setting {
     this.bindCancelBtn()
 
     this.renderMethodSelect()
+    this.renderCitySelect()
   }
 
   setDbManager(dbm) {
@@ -16,9 +17,13 @@ class Setting {
     const applyBtn = document.getElementById('apply-btn')
     applyBtn.addEventListener('click', () => {
       const methodSelect = document.getElementById('method-select')
+      const citySelect = document.getElementById('city-select')
 
-      // store selected method to db
-      this.dbm.db.global.update(1, { key: 'selectedMethod', value: parseInt(methodSelect.value) })
+      // store selected method to db      
+      this.dbm.db.global.bulkPut([
+        { id: 1, key: 'selectedMethod', value: parseInt(methodSelect.value) },
+        { id: 2, key: 'selectedCity', value: parseInt(citySelect.value) }
+      ])
 
       window.close()
     })
@@ -54,6 +59,25 @@ class Setting {
         option.setAttribute('selected', 'selected')
       
         methodSelect.appendChild(option)
+    })
+  }
+
+  async renderCitySelect() {
+    const citySelect = document.getElementById('city-select')
+    
+    const selectedCity = await this.dbm.db.global.get({ key: 'selectedCity'})
+    const cities = await this.dbm.db.city.toArray()
+    
+    cities.forEach(city => {
+      let option = document.createElement('option')
+      option.value = city.id
+      option.innerHTML = city.name
+      
+      // set selected
+      if (city.id === selectedCity.value)
+        option.setAttribute('selected', 'selected')
+      
+        citySelect.appendChild(option)
     })
   }
 }

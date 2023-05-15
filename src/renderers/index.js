@@ -9,7 +9,7 @@ class PrayerTime {
 
     // receive from main process to render method
     window.electronAPI.onCloseSettings(() => {
-      this.renderMethod()
+      this.render()
     })
   }
 
@@ -18,22 +18,21 @@ class PrayerTime {
   } 
 
   // get selected method from IndexedDB
-  async getSelectedMethodName() {
-    // query all methods
-    const methods = await this.dbm.db.methods.toArray()
-
-    // query a selected method
+  async getSelectedMethod() {
+    // query a selected method from settings
     const selectedMethod = await this.dbm.db.global.get({ key: 'selectedMethod'})
 
-    // find a selected method from methods array
-    let foundMethod = methods.filter((method => method.id == selectedMethod.value))
-    
-    // get selected method name
-    let methodName = null;
-    if (foundMethod.length === 1)
-      methodName = foundMethod[0].name
-    
-    return methodName;
+    // query method by id
+    return await this.dbm.db.methods.get({ id: selectedMethod.value })
+  }
+
+  // get selected method from IndexedDB
+  async getSelectedCity() {
+    // query a selected method from settings
+    const selectedCity = await this.dbm.db.global.get({ key: 'selectedCity'})
+
+    // query city by id
+    return await this.dbm.db.city.get({ id: selectedCity.value })
   }
 
   bindSettingsBtn() {
@@ -46,9 +45,31 @@ class PrayerTime {
 
   bindRefreshBtn() {
     const refreshBtn = document.getElementById('refresh-btn')
+
     refreshBtn.addEventListener('click', () => {
-      // one way, tell main process to update data from remote server
-      window.electronAPI.updateData()
+      const method = this.getSelectedMethod()
+      const city = this.getSelectedCity()
+
+      // wait until all promises resolved
+      Promise.all([method, city]).then(params => {
+        // one way, tell main process to update data from remote server
+        window.electronAPI.getPrayerTimeList(params)
+          .then(items => {
+            items.forEach(item => {
+              this.dbm.db.timings.put({
+                methodId: params[0].id,
+                cityId: params[1].id,
+                gregorian: item.date.gregorian.date,
+                hijri: item.date.hijri.date,
+                fajr: this.cleanTiming(item.timings.Fajr),
+                dhuhr: this.cleanTiming(item.timings.Dhuhr),
+                asr: this.cleanTiming(item.timings.Asr),
+                maghrib: this.cleanTiming(item.timings.Maghrib),
+                isha: this.cleanTiming(item.timings.Isha),
+              })
+            })
+          })
+      })
     })
   }
 
@@ -74,21 +95,27 @@ class PrayerTime {
     const selected = document.getElementById('selected-method')
 
     // render method name in main window
-    this.getSelectedMethodName().then(result => selected.innerText = result)
+    this.getSelectedMethod().then(method => selected.innerText = method.name)
   }
 
   renderPrayerTimes() {
-    // get the day starting from 0. need to find data in an array
-    const day = new Date().getDate() - 1
+    const gregorian = moment().format('DD-MM-YYYY')
+    const method = this.getSelectedMethod()
+    const city = this.getSelectedCity()
 
-    // TODO add parameter selectedMethod
-    window.electronAPI.getPrayerTime(day).then(timings => {
-      // render prayer times in main window
-      document.querySelector('.fajr-time').innerText = this.cleanTiming(timings.Fajr)
-      document.querySelector('.dhuhr-time').innerText = this.cleanTiming(timings.Dhuhr)
-      document.querySelector('.asr-time').innerText = this.cleanTiming(timings.Asr)
-      document.querySelector('.maghrib-time').innerText = this.cleanTiming(timings.Maghrib)
-      document.querySelector('.isha-time').innerText = this.cleanTiming(timings.Isha)
+    Promise.all([method, city]).then(params => {
+      const methodId = params[0].id
+      const cityId = params[1].id
+
+      this.dbm.db.timings.get({ methodId: methodId, cityId: cityId, gregorian: gregorian})
+        .then(timings => {
+          // render prayer times in main window
+          document.querySelector('.fajr-time').innerText = this.cleanTiming(timings.fajr)
+          document.querySelector('.dhuhr-time').innerText = this.cleanTiming(timings.dhuhr)
+          document.querySelector('.asr-time').innerText = this.cleanTiming(timings.asr)
+          document.querySelector('.maghrib-time').innerText = this.cleanTiming(timings.maghrib)
+          document.querySelector('.isha-time').innerText = this.cleanTiming(timings.isha)
+        })
     })
   }
 

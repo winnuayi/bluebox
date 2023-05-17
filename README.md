@@ -1,4 +1,4 @@
-# GOLDBOX
+# LEARN ELECTRON
 
 Playing ground to train my rusty skill. It is based on ElectronJS.
 
@@ -6,8 +6,8 @@ Playing ground to train my rusty skill. It is based on ElectronJS.
 
 Clone the project
 ```
-$ git clone https://<token>@github.com/winnuayi/goldbox
-$ cd goldbox
+$ git clone https://<token>@github.com/winnuayi/learn-electron
+$ cd learn-electron
 ```
 
 Install javascript dependencies
